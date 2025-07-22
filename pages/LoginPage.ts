@@ -1,5 +1,5 @@
 import { Locator, Page, expect } from '@playwright/test';
-import { BasePage } from './base.page';
+import { BasePage } from './BasePage';
 
 export class LoginPage extends BasePage {
   readonly usernameInput: Locator;
@@ -15,7 +15,7 @@ export class LoginPage extends BasePage {
     this.errorMessage = page.locator('[data-test="error"]');
   }
 
-  async login(username: string, password: string = 'secret_sauce') {
+  async login(username: string, password = 'secret_sauce') {
     await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
@@ -26,7 +26,6 @@ export class LoginPage extends BasePage {
     await expect(this.errorMessage).toContainText(text);
   }
 }
-
 
 
 //HW5-1

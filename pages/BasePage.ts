@@ -1,7 +1,7 @@
 import { Page } from '@playwright/test';
 
 export class BasePage {
-  protected page: Page;
+  protected readonly page: Page;
   protected readonly baseURL = 'https://www.saucedemo.com';
 
   constructor(page: Page) {
@@ -12,7 +12,6 @@ export class BasePage {
     await this.page.goto(`${this.baseURL}${path}`);
   }
 }
-
 
 //HW5-1
 

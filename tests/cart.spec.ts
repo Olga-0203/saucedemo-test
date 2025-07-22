@@ -1,45 +1,73 @@
 // tests/cart.spec.ts
-import { test, expect } from '../fixtures/auth.fixture';
-
+import { loggedInTest as test } from '../fixtures/authFixtures';
+import { expect } from '@playwright/test';
+import { InventoryPage } from '../pages/InventoryPage';
+import { CartPage } from '../pages/CartPage';
 
 test.describe('Проверки корзины', () => {
-  test('Добавление одного товара', async ({ inventoryPage }) => {
+
+  test('Корзина изначально пустая', async ({ page }) => {
+    const inventoryPage = new InventoryPage(page);
+    const cartPage = new CartPage(page);
+
+    await inventoryPage.goto('/inventory.html');
+    await inventoryPage.expectAuthorized();
+
+    await inventoryPage.gotoCart();
+    await cartPage.expectCartEmpty();
+  });
+
+  test('Добавление одного товара', async ({ page }) => {
+    const inventoryPage = new InventoryPage(page);
+
+    await inventoryPage.goto('/inventory.html');
+    await inventoryPage.expectAuthorized();
+
     await inventoryPage.addItemToCart(0);
     expect(await inventoryPage.getCartCount()).toBe(1);
   });
 
-  test('Добавление двух товаров', async ({ inventoryPage }) => {
+  test('Добавление двух товаров', async ({ page }) => {
+    const inventoryPage = new InventoryPage(page);
+
+    await inventoryPage.goto('/inventory.html');
+    await inventoryPage.expectAuthorized();
+
     await inventoryPage.addItemToCart(0);
     await inventoryPage.addItemToCart(1);
     expect(await inventoryPage.getCartCount()).toBe(2);
   });
 
-  test('Нет товаров после входа', async ({ inventoryPage }) => {
-    expect(await inventoryPage.getCartCount()).toBe(0);
-  });
+  test('Удаление товара из корзины', async ({ page }) => {
+    const inventoryPage = new InventoryPage(page);
+    const cartPage = new CartPage(page);
 
-  test('Корзина отображается после добавления и перехода', async ({ inventoryPage, page }) => {
-    await inventoryPage.addItemToCart(2);
+    await inventoryPage.goto('/inventory.html');
+    await inventoryPage.expectAuthorized();
+
+    await inventoryPage.addItemToCart(0);
     await inventoryPage.gotoCart();
-    await expect(page.locator('.cart_item')).toHaveCount(1);
+
+    await cartPage.removeAllItems();
+    await cartPage.expectCartEmpty();
   });
 
-  test('Товары в корзине соответствуют добавленным', async ({ inventoryPage, page }) => {
-    // Сохраняем имена по индексу до добавления в корзину
-    const inventoryTitles = await page.locator('.inventory_item_name').allTextContents();
-    const firstAdded = inventoryTitles[1];
-    const secondAdded = inventoryTitles[3];
+  test('Очистка корзины с несколькими товарами', async ({ page }) => {
+    const inventoryPage = new InventoryPage(page);
+    const cartPage = new CartPage(page);
 
+    await inventoryPage.goto('/inventory.html');
+    await inventoryPage.expectAuthorized();
+
+    await inventoryPage.addItemToCart(0);
     await inventoryPage.addItemToCart(1);
-    await inventoryPage.addItemToCart(3);
-    await inventoryPage.gotoCart();
+    await inventoryPage.addItemToCart(2);
 
-    const cartTitles = await page.locator('.cart_item .inventory_item_name').allTextContents();
-    expect(cartTitles).toContain(firstAdded);
-    expect(cartTitles).toContain(secondAdded);
-    expect(cartTitles.length).toBe(2);
+    await inventoryPage.gotoCart();
+    await cartPage.removeAllItems();
+    await cartPage.expectCartEmpty();
   });
-})
+});
 
 
 //HW5-1
