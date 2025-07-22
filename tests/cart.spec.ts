@@ -1,3 +1,4 @@
+// tests/cart.spec.ts
 import { test, expect } from '../fixtures/auth.fixture';
 
 
@@ -39,5 +40,6 @@ test.describe('Проверки корзины', () => {
     expect(cartTitles.length).toBe(2);
   });
 })
+
 
 //HW5-1
