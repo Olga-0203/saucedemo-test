@@ -1,5 +1,5 @@
-import { expect } from '@playwright/test';
-import { test } from '../fixtures/user.fixture';
+import { test, expect } from '../fixtures/auth.fixture';
+
 
 test.describe('Проверки корзины', () => {
   test('Добавление одного товара', async ({ inventoryPage }) => {
@@ -38,7 +38,6 @@ test.describe('Проверки корзины', () => {
     expect(cartTitles).toContain(secondAdded);
     expect(cartTitles.length).toBe(2);
   });
-});
+})
 
-
-//HW5
+//HW5-1
